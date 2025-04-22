@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authsecurity
+spec:
+  selector:
+    matchLabels:
+      app: authsecurity
+  template:
+    metadata:
+      labels:
+        app: authsecurity
+    spec:
+      containers:
+      - name: authsecurity
+        image: saichandvemuri/authsecurity
+        ports:
+        - containerPort: 8082
+        env:
+          - name: EUREKA_SERVER_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                key: eureka_service_address
+                name: eureka-cm
+          - name: CONFIG_SERVER_URL
+            valueFrom:
+              configMapKeyRef:
+                key: config-url
+                name: config-cm
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: hostname
+                name: mysql-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: authsecurity-svc
+spec:
+  selector:
+    app: authsecurity
+  ports:
+  - port: 80
+    targetPort: 8082

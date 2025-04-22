@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eurekaserver
+spec:
+  selector:
+    matchLabels:
+      app: eurekaserver
+  template:
+    metadata:
+      labels:
+        app: eurekaserver
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: eurekaserver
+          image: saichandvemuri/eurekaserver:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8761

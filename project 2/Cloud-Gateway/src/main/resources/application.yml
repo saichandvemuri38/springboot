@@ -1,0 +1,29 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: API-GATEWAY
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:9296}
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+
+      routes:
+        - id: SPRING-SECURITY
+          uri: lb://SPRING-SECURITY
+          predicates:
+            - Path=/auth/**
+        - id: LIBRARY-SERVICE
+          uri: lb://LIBRARY-SERVICE
+          predicates:
+            - Path=/users/**
+        - id: BATMINTON-SERVICE
+          uri: lb://BATMINTON-SERVICE
+          predicates:
+            - Path=/batminton/**

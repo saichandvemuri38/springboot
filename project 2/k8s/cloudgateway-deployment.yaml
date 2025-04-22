@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudgateway
+spec:
+  selector:
+    matchLabels:
+      app: cloudgateway
+  template:
+    metadata:
+      labels:
+        app: cloudgateway
+    spec:
+      containers:
+      - name: cloudgateway
+        image: saichandvemuri/cloudgateway
+        ports:
+        - containerPort: 9090
+        env:
+        - name: EUREKA_SERVER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: eureka_service_address
+              name: eureka-cm
+        - name: CONFIG_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              key: config_url
+              name: config-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudgateway-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: cloudgateway
+  ports:
+  - port: 80
+    targetPort: 9090
+
+

@@ -1,0 +1,13 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: BILLING-SERVICE
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:9296}
+logging:
+  level:
+    root: info
+grpc:
+  server:
+    port: 9084

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: libraryservice
+spec:
+  selector:
+    matchLabels:
+      app: libraryservice
+  template:
+    metadata:
+      labels:
+        app: libraryservice
+    spec:
+      containers:
+      - name: libraryservice
+        image: saichandvemuri/libraryservice
+        ports:
+        - containerPort: 8080
+        env:
+        - name: EUREKA_SERVER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: eureka_service_address
+              name: eureka-cm
+        - name: CONFIG_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              key: config_url
+              name: config-cm
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: hostname
+              name: mysql-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: libraryservice-svc
+spec:
+  selector:
+    app: libraryservice-app
+  ports:
+  - port: 80
+    targetPort: 8080

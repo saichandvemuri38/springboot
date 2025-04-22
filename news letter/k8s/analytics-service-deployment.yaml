@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analyticsservice
+spec:
+  selector:
+    matchLabels:
+      app: analyticsservice
+  template:
+    metadata:
+      labels:
+        app: analyticsservice
+    spec:
+      containers:
+      - name: analyticsservice
+        image: saichandvemuri/analyticsservice
+        ports:
+        - containerPort: 8084
+        env:
+          - name: EUREKA_SERVER_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                key: eureka_service_address
+                name: eureka-cm
+          - name: CONFIG_SERVER_URL
+            valueFrom:
+              configMapKeyRef:
+                key: config-url
+                name: config-cm
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: hostname
+                name: mysql-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: analyticsservice-svc
+spec:
+  selector:
+    app: analyticsservice
+  ports:
+  - port: 80
+    targetPort: 8084
